@@ -2,17 +2,19 @@
 
 A comprehensive multi-tenant data ingestion and analytics platform for Shopify stores, built with Node.js, React, and PostgreSQL.
 
-## 🚀 Features
+---
 
-- **Multi-tenant Architecture**: Isolated data per Shopify store
-- **Real-time Data Sync**: Webhook-based real-time updates
-- **Scheduled Backfill**: Automated periodic data synchronization
-- **Analytics Dashboard**: Interactive charts and insights
-- **OAuth Integration**: Secure Shopify app installation
-- **Responsive UI**: Modern React frontend with Tailwind CSS
+## 🚀 Features
+- **Multi-tenant Architecture**: Isolated data per Shopify store  
+- **Real-time Data Sync**: Webhook-based real-time updates  
+- **Scheduled Backfill**: Automated periodic data synchronization  
+- **Analytics Dashboard**: Interactive charts and insights  
+- **OAuth Integration**: Secure Shopify app installation  
+- **Responsive UI**: Modern React frontend with Tailwind CSS  
+
+---
 
 ## 🏗️ Architecture
-
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   React Frontend│    │  Express Backend│    │   PostgreSQL    │
@@ -32,37 +34,39 @@ A comprehensive multi-tenant data ingestion and analytics platform for Shopify s
                        └─────────────────┘
 ```
 
-## 🛠️ Tech Stack
+---
 
+## 🛠️ Tech Stack
 ### Backend
-- **Node.js** + **Express.js** - Server framework
-- **Prisma** - Database ORM with PostgreSQL
-- **JWT** - Authentication
-- **Axios** - HTTP client for Shopify API
-- **Node-cron** - Scheduled tasks
+- **Node.js** + **Express.js** - Server framework  
+- **Prisma** - ORM with PostgreSQL  
+- **JWT** - Authentication  
+- **Axios** - Shopify API client  
+- **Node-cron** - Scheduled tasks  
 
 ### Frontend
-- **React 18** - UI framework
-- **React Router** - Client-side routing
-- **Recharts** - Data visualization
-- **Tailwind CSS** - Styling
-- **React Hot Toast** - Notifications
+- **React 18** - UI framework  
+- **React Router** - Routing  
+- **Recharts** - Data visualization  
+- **Tailwind CSS** - Styling  
+- **React Hot Toast** - Notifications  
 
 ### Database
-- **PostgreSQL** - Primary database
-- **Multi-tenant schema** with tenant isolation
+- **PostgreSQL** - Primary database  
+- **Multi-tenant schema** with tenant isolation  
+
+---
 
 ## 📋 Prerequisites
+- Node.js 18+  
+- PostgreSQL 13+  
+- Shopify Partner Account  
+- ngrok (for local testing)  
 
-- Node.js 18+ 
-- PostgreSQL 13+
-- Shopify Partner Account (for app development)
-- ngrok (for local webhook testing)
+---
 
 ## 🚀 Quick Start
-
 ### 1. Clone and Install
-
 ```bash
 git clone <repository-url>
 cd xenoxify
@@ -72,18 +76,13 @@ cd ../client && npm install
 ```
 
 ### 2. Database Setup
-
 ```bash
-# Create PostgreSQL database
 createdb xenoxify
-
-# Set up environment variables
 cp server/env.example server/.env
-# Edit server/.env with your database URL and Shopify credentials
+# Edit server/.env with DB URL & Shopify credentials
 ```
 
 ### 3. Database Migration
-
 ```bash
 cd server
 npx prisma migrate dev --name init
@@ -92,250 +91,176 @@ npm run db:seed
 ```
 
 ### 4. Shopify App Setup
+- **App URL**: `https://xenoxify.com`  
+- **Redirect URL**: `https://xenoxify.com/api/auth/callback`  
+- **API Key**: `YOUR_API_KEY`  
+- **API Secret**: `YOUR_API_SECRET`  
 
-Your Shopify app is already configured with the following credentials:
+Add these to `.env`.  
 
-**App Configuration:**
-- **App URL**: `https://xenoxify.com`
-- **Allowed redirection URL**: `https://xenoxify.com/api/auth/callback`
-- **API Key**: `5013237d82a781ddc5a203f3927be7c3`
-- **API Secret**: `bd48db258164438da0a52614ad22e20d`
-- **Service Account**: `delivery@shopify-pubsub-webhooks.iam.gserviceaccount.com`
-
-Copy these credentials to your environment file.
-
-### 5. Start Development Servers
-
+### 5. Start Servers
 ```bash
-# Terminal 1: Backend + Worker
-cd server
-npm run dev
-
-# Terminal 2: Frontend
-cd client
-npm start
-
-# Terminal 3: Worker (optional, runs automatically with dev)
-cd server
-npm run worker
-```
-
-### 6. Access the Application
-
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:3001
-- **Health Check**: http://localhost:3001/health
-
-## 🔧 Environment Variables
-
-### Backend (.env)
-
-```env
-# Database
-DATABASE_URL="postgresql://username:password@localhost:5432/xenoxify"
-
-# Shopify App Configuration
-SHOPIFY_API_KEY="5013237d82a781ddc5a203f3927be7c3"
-SHOPIFY_API_SECRET="bd48db258164438da0a52614ad22e20d"
-SHOPIFY_SCOPES="read_products,write_products,read_customers,write_customers,read_orders,write_orders"
-
-# App Configuration
-APP_URL="https://xenoxify.com"
-FRONTEND_URL="https://xenoxify.com"
-JWT_SECRET="xenoxify_jwt_secret_2024_production_key_change_this"
-NODE_ENV="production"
-```
-
-## 📊 Database Schema
-
-### Core Tables
-
-- **tenants** - Shopify store information and access tokens
-- **users** - Application users with tenant association
-- **products** - Shopify products with tenant isolation
-- **customers** - Shopify customers with tenant isolation
-- **orders** - Shopify orders with tenant isolation
-- **snapshots** - Aggregated analytics data
-
-### Multi-tenant Design
-
-All business data tables include a `tenant_id` foreign key to ensure complete data isolation between stores.
-
-## 🔌 API Endpoints
-
-### Authentication
-- `GET /auth/install?shop=store.myshopify.com` - Initiate OAuth
-- `GET /auth/callback` - OAuth callback
-- `POST /auth/login` - User login
-
-### Webhooks
-- `POST /webhooks/products/create` - Product creation
-- `POST /webhooks/products/update` - Product updates
-- `POST /webhooks/customers/create` - Customer creation
-- `POST /webhooks/orders/create` - Order creation
-
-### API
-- `GET /api/insights/summary` - Dashboard summary
-- `GET /api/insights/orders` - Orders analytics
-- `GET /api/insights/top-customers` - Top customers
-- `GET /api/products` - Products list
-- `GET /api/customers` - Customers list
-- `GET /api/orders` - Orders list
-
-## 🔄 Data Synchronization
-
-### Real-time Sync (Webhooks)
-- Automatic webhook registration on app install
-- HMAC verification for security
-- Immediate data updates for products, customers, and orders
-
-### Scheduled Sync (Worker)
-- Daily full synchronization at 2 AM
-- Hourly incremental sync for recent data
-- Rate-limited API calls to respect Shopify limits
-- Automatic retry logic for failed requests
-
-## 🧪 Testing
-
-### Local Testing with ngrok
-
-```bash
-# Install ngrok
-npm install -g ngrok
-
-# Start ngrok tunnel
-ngrok http 3001
-
-# Update Shopify app URLs to use ngrok URL
-# Example: https://abc123.ngrok.io
-```
-
-### Sample Data
-
-The seed script creates sample data for testing:
-- Email: `admin@xenoxify.com`
-- Tenant ID: Generated UUID (check console output)
-
-## 🚀 Deployment
-
-### Backend (Render/Heroku)
-
-```bash
-# Set environment variables
-DATABASE_URL=postgresql://...
-SHOPIFY_API_KEY=...
-SHOPIFY_API_SECRET=...
-
-# Deploy
-git push heroku main
-```
-
-### Frontend (Vercel/Netlify)
-
-```bash
-# Build
-cd client
-npm run build
-
-# Deploy build folder
-```
-
-### Database
-
-Use managed PostgreSQL services:
-- **Render Postgres**
-- **Heroku Postgres**
-- **AWS RDS**
-- **ElephantSQL**
-
-## 📈 Monitoring & Analytics
-
-### Key Metrics
-- Total customers per tenant
-- Order volume and revenue
-- Product performance
-- Customer lifetime value
-
-### Charts & Visualizations
-- Orders over time (line chart)
-- Revenue trends (bar chart)
-- Top customers table
-- Real-time dashboard updates
-
-## 🔒 Security Features
-
-- **HMAC Verification** - All webhooks verified
-- **JWT Authentication** - Secure API access
-- **Tenant Isolation** - Complete data separation
-- **Rate Limiting** - API protection
-- **CORS Configuration** - Cross-origin security
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-1. **Webhook not receiving data**
-   - Check ngrok tunnel is active
-   - Verify webhook URLs in Shopify admin
-   - Check HMAC verification
-
-2. **Database connection errors**
-   - Verify DATABASE_URL format
-   - Check PostgreSQL is running
-   - Run migrations: `npx prisma migrate dev`
-
-3. **OAuth flow issues**
-   - Verify app URLs in Shopify Partner Dashboard
-   - Check API key and secret
-   - Ensure HTTPS for production
-
-### Logs
-
-```bash
-# Backend logs
+# Terminal 1: Backend
 cd server && npm run dev
 
-# Worker logs
+# Terminal 2: Frontend
+cd client && npm start
+
+# Terminal 3: Worker (optional)
 cd server && npm run worker
 ```
 
-## 🚧 Known Limitations
-
-- **Rate Limits**: Shopify API has rate limits (2 requests/second)
-- **Data Retention**: No automatic data cleanup (implement as needed)
-- **Scaling**: Single-instance worker (consider queue system for scale)
-- **Authentication**: Basic email-based auth (enhance with OAuth providers)
-
-## 🔮 Next Steps
-
-### Production Enhancements
-- [ ] Redis queue system for background jobs
-- [ ] Horizontal scaling with load balancers
-- [ ] Advanced authentication (OAuth providers)
-- [ ] Data export/import features
-- [ ] Advanced analytics and reporting
-- [ ] Mobile app support
-- [ ] API rate limiting and monitoring
-- [ ] Automated backups and disaster recovery
-
-### Performance Optimizations
-- [ ] Database indexing optimization
-- [ ] GraphQL API for efficient data fetching
-- [ ] Caching layer (Redis)
-- [ ] CDN for static assets
-- [ ] Database connection pooling
-
-## 📞 Support
-
-For issues and questions:
-- Check the troubleshooting section
-- Review Shopify API documentation
-- Open an issue in the repository
-
-## 📄 License
-
-MIT License - see LICENSE file for details.
+### 6. Access
+- Frontend → http://localhost:3000  
+- Backend → http://localhost:3001  
+- Health Check → http://localhost:3001/health  
 
 ---
 
-**Built with ❤️ for the Shopify ecosystem**
+## 🔧 Environment Variables
+```env
+DATABASE_URL="postgresql://username:password@localhost:5432/xenoxify"
+SHOPIFY_API_KEY="your_api_key"
+SHOPIFY_API_SECRET="your_api_secret"
+SHOPIFY_SCOPES="read_products,write_products,read_customers,read_orders"
+
+APP_URL="https://xenoxify.com"
+FRONTEND_URL="https://xenoxify.com"
+JWT_SECRET="your_jwt_secret"
+NODE_ENV="production"
+```
+
+---
+
+## 📊 Database Schema
+- **tenants** → Shopify store info & tokens  
+- **users** → App users  
+- **products** → Products (per tenant)  
+- **customers** → Customers (per tenant)  
+- **orders** → Orders (per tenant)  
+- **snapshots** → Aggregated analytics  
+
+_All tables include `tenant_id` for isolation._  
+
+---
+
+## 🔌 API Endpoints
+### Auth
+- `GET /auth/install?shop=store.myshopify.com`  
+- `GET /auth/callback`  
+- `POST /auth/login`  
+
+### Webhooks
+- `POST /webhooks/products/create`  
+- `POST /webhooks/customers/create`  
+- `POST /webhooks/orders/create`  
+
+### Insights
+- `GET /api/insights/summary`  
+- `GET /api/insights/orders`  
+- `GET /api/insights/top-customers`  
+
+### Data
+- `GET /api/products`  
+- `GET /api/customers`  
+- `GET /api/orders`  
+
+---
+
+## 🔄 Data Synchronization
+### Real-time (Webhooks)
+- Automatic registration  
+- HMAC verification  
+- Immediate updates  
+
+### Scheduled (Worker)
+- Daily full sync (2 AM)  
+- Hourly incremental sync  
+- Rate-limited API calls  
+- Retry logic  
+
+---
+
+## 🧪 Testing
+### Local with ngrok
+```bash
+npm install -g ngrok
+ngrok http 3001
+```
+
+Update Shopify app URLs with ngrok URL.  
+
+---
+
+## 🚀 Deployment
+### Backend
+```bash
+git push heroku main
+```
+
+### Frontend
+```bash
+cd client
+npm run build
+```
+
+Deploy `/build` to Vercel/Netlify.  
+
+### Database
+Use managed PostgreSQL (Render, Heroku, AWS RDS, ElephantSQL).  
+
+---
+
+## 📈 Monitoring & Analytics
+- Total customers per tenant  
+- Order volume & revenue  
+- Product performance  
+- CLV (Customer Lifetime Value)  
+
+Visualizations:
+- Line chart (orders)  
+- Bar chart (revenue)  
+- Top customers table  
+
+---
+
+## 🔒 Security
+- **HMAC Verification** for webhooks  
+- **JWT Authentication**  
+- **Tenant Isolation**  
+- **Rate Limiting**  
+- **CORS Configuration**  
+
+---
+
+## 🐛 Troubleshooting
+**1. Webhook not working** → Check ngrok + HMAC  
+**2. DB errors** → Check `DATABASE_URL` + run migrations  
+**3. OAuth issues** → Verify app URLs + keys  
+
+Logs:
+```bash
+cd server && npm run dev
+cd server && npm run worker
+```
+
+---
+
+## 🚧 Known Limitations
+- Shopify API rate limits (2 req/sec)  
+- No auto data cleanup  
+- Single worker instance  
+- Basic email auth  
+
+---
+
+## 🔮 Next Steps
+- [ ] Redis queue system  
+- [ ] Load balancer support  
+- [ ] OAuth providers  
+- [ ] Advanced analytics & reporting  
+- [ ] Mobile app support  
+- [ ] Automated backups  
+
+---
+
