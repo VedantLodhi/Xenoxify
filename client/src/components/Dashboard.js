@@ -24,7 +24,7 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 const Dashboard = () => {
   // State with proper initial values
   const [summaryData, setSummaryData] = useState({
-    totalOrders: 0,
+    totalOrders: 10,
     totalRevenue: 0,
     totalCustomers: 0,
     averageOrderValue: 0,
@@ -333,18 +333,6 @@ useEffect(() => {
   const last = last_name?.[0] || "";
   return (first + last).toUpperCase();
 }
-
-
-
-
-
-
-
-
-
-
-
-
   // Loading state
   if (loading) {
     return (
