@@ -1,0 +1,125 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id            String   @id @default(uuid())
+  shop_domain   String   @unique
+  access_token  String
+  scopes        String?
+  webhook_secret String?
+  installed_at  DateTime @default(now())
+  status        String   @default("active")
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  // Relations
+  products      Product[]
+  customers     Customer[]
+  orders        Order[]
+  snapshots     Snapshot[]
+  users         User[]
+
+  @@map("tenants")
+}
+
+model User {
+  id         String   @id @default(uuid())
+  email      String   @unique
+  password   String?
+  tenant_id  String
+  role       String   @default("admin")
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relations
+  tenant     Tenant   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+
+  @@map("users")
+}
+
+model Product {
+  id          String   @id
+  tenant_id   String
+  title       String?
+  body_html   String?
+  vendor      String?
+  product_type String?
+  handle      String?
+  status      String?
+  created_at  DateTime?
+  updated_at  DateTime?
+  raw         String?
+
+  // Relations
+  tenant      Tenant   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+
+  @@map("products")
+}
+
+model Customer {
+  id           String   @id
+  tenant_id    String
+  first_name   String?
+  last_name    String?
+  email        String?
+  phone        String?
+  total_spent  Float?
+  orders_count Int?
+  state        String?
+  created_at   DateTime?
+  updated_at   DateTime?
+  raw          String?
+
+  // Relations
+  tenant       Tenant   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  orders       Order[]
+
+  @@map("customers")
+}
+
+model Order {
+  id            String   @id
+  tenant_id     String
+  order_number  String?
+  total_price   Float?
+  currency      String?
+  customer_id   String?
+  financial_status String?
+  fulfillment_status String?
+  created_at    DateTime?
+  processed_at  DateTime?
+  raw           String?
+
+  // Relations
+  tenant        Tenant   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  customer      Customer? @relation(fields: [customer_id], references: [id])
+
+  @@map("orders")
+}
+
+model Snapshot {
+  id               String   @id @default(uuid())
+  tenant_id        String
+  date             DateTime
+  total_customers  Int      @default(0)
+  total_orders     Int      @default(0)
+  total_revenue    Float    @default(0)
+  new_customers    Int      @default(0)
+  new_orders       Int      @default(0)
+  created_at       DateTime @default(now())
+
+  // Relations
+  tenant           Tenant   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+
+  @@unique([tenant_id, date])
+  @@map("snapshots")
+}
